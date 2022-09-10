@@ -1,6 +1,8 @@
 package db;
 
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import lombok.*;
 
@@ -64,7 +66,41 @@ public class DbHandler {
 		return rs;
 	}
 	
+	public int dbSetInsert(Connection conn, String sql) {
+		
+		if(conn==null || sql == null) {
+			return -1;
+		}
+		
+		try {
+			PreparedStatement ps = conn.prepareStatement(sql);
+			return ps.executeUpdate();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return -1;
+		}
+	}
+	
+	public int dbSetInsert(Connection conn, PreparedStatement ps) {
+		
+		if(conn==null || ps == null) {
+			return -1;
+		}
+		
+		try {
+			return ps.executeUpdate();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return -1;
+		}
+	}	
+	
 //	public static void main(String[] args) {
+		
 //		DbHandler db = new DbHandler();
 //		String dirPath = System.getProperty("user.dir");
 //		
