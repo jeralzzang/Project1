@@ -1,0 +1,24 @@
+Zero-base FirstProject
+1. 프로젝트 설명
+    - 서울시 공공와이파이 API정보를 이용하여 내 위치에서 가까운 와이파이 정보를 출력하는 웹페이지 개발
+2. 개발 환경
+    - Server : Local
+    - WEB : Apache Tomcat 8.5
+    - Lang : JAVA, HTML
+    - DB : sqlite3
+3. 기능
+    - 서울시 공공와이파이 정보 가져오기
+    - 내 위치 가져오기
+    - 위치 기준 가까운 와이파이정보 가져오기
+    - 와이파이 정보 조회 이력 출력
+
+4. 기능별 시나리오
+    - 서울시 공공와이파이 정보 가져오기
+       ˚ DB에 저장되어 있는 URL Select
+       ˚ HTTP 호출하여 정보를 JSON형태로 가져온다.
+       ˚ JSON형태의 데이터를 DB에 Insert
+    - 내 위치 가져오기   
+    
+    
+    
+    SELECT API_ID, REQ_URL, CERT_KEY, FILE_TYPE, SERVICE_NAME FROM T_API_INFO where API_NAME = 'SeoulFreeWifi'
