@@ -4,6 +4,7 @@ import lombok.*;
 
 @Setter
 class FreeWifiInfo{
+	private int req_id;
 	private String mgr_no;
 	private String wrdofc;
 	private String main_nm;
@@ -21,7 +22,10 @@ class FreeWifiInfo{
 	private Double lnt;
 	private String work_dttm;
 	
-
+	public void setReq_id(int req_id) {
+		this.req_id = req_id;
+	}
+	
 	public void setMgr_no(String mgr_no) {
 		this.mgr_no = mgr_no;
 	}
@@ -101,7 +105,9 @@ class FreeWifiInfo{
 		this.work_dttm = work_dttm;
 	}
 
-
+	public int getReq_id() {
+		return req_id;
+	}
 	public String getMgr_no() {
 		return mgr_no;
 	}
