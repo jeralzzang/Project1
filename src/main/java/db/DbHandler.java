@@ -20,6 +20,7 @@ public class DbHandler {
     public Connection sqliteDbConn() {
 		Connection conn = null;
 		String path = getCurrentDirectory();
+		System.out.println(path.concat(SQLITE_FILE_NAME));
 		String dbConnUrl = "jdbc:sqlite:".concat(path.concat(SQLITE_FILE_NAME));
 		
 		try {
