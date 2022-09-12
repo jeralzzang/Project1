@@ -1,20 +1,26 @@
 package db;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import lombok.*;
+import util.ApiCallUtil;
 
 public class DbHandler {
 
-	static final String SQLITE_FILE_PATH = "/src/main/java/db/seoul-free-wifi.db";
-
+	static final String SQLITE_FILE_NAME = "db/seoul-free-wifi.db";
+	
+	String getCurrentDirectory() {
+		return this.getClass().getClassLoader().getResource("").getPath();
+	}
+	
     public Connection sqliteDbConn() {
 		Connection conn = null;
-		String dirPath = System.getProperty("user.dir");
-		
-	    String dbConnUrl = "jdbc:sqlite:".concat(dirPath.concat(SQLITE_FILE_PATH));
+		String path = getCurrentDirectory();
+		String dbConnUrl = "jdbc:sqlite:".concat(path.concat(SQLITE_FILE_NAME));
 		
 		try {
 			Class.forName("org.sqlite.JDBC");
@@ -36,6 +42,7 @@ public class DbHandler {
     		
     	}catch(Exception E) {
     		E.getStackTrace();
+    		System.out.println("select error   " + E.getMessage());
     	}
     	
     	return rs;
@@ -98,39 +105,6 @@ public class DbHandler {
 			return -1;
 		}
 	}	
-	
-//	public static void main(String[] args) {
-		
-//		DbHandler db = new DbHandler();
-//		String dirPath = System.getProperty("user.dir");
-//		
-//		Connection conn = db.sqliteDbConn();
-//		String sql = "select id, no, dt, key from test";
-//		
-//		try {
-////			PreparedStatement ps = conn.prepareStatement(sql);
-//			SqlCondition cond = new SqlCondition(" WHERE ID = ? ", "이");
-//			ArrayList<SqlCondition> condList = new ArrayList();
-//			condList.add(cond);
-//			
-//			ResultSet rs = db.dbGetSelect(conn, sql, condList);
-//			
-//			String id = rs.getString("id");
-//			int no = rs.getInt("no");
-//			String dt = rs.getString("dt");
-//			double key = rs.getDouble("key");
-//			
-//			System.out.println(id);
-//			System.out.println(no);
-//			System.out.println(dt);
-//			System.out.println(key);
-//			
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}finally {
-//		}
-//		
-//	}
+
 	
 }
