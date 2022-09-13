@@ -204,10 +204,12 @@ public class ApiCallUtil {
 					+ " ?, ?, ?) ";
 			try {
 				ps = conn.prepareStatement(sql);	
-				conn.setAutoCommit(false);
+				
 			}catch(Exception E) {
 				System.out.println(E.getMessage());
 			}
+			conn.setAutoCommit(false);
+//			System.out.println(getNowDateTime("YYYY-MM-dd HH:mm:ss"));
 			for(int i=0; i< list.size(); i++) {
 				ps.setInt(1, list.get(i).getReq_id());
 				ps.setString(2, list.get(i).getMgr_no());
@@ -235,8 +237,10 @@ public class ApiCallUtil {
 					conn.rollback();
 					throw new Exception();
 				}
-				conn.commit();
 			}
+//			System.out.println(getNowDateTime("YYYY-MM-dd HH:mm:ss"));
+			conn.commit();
+			conn.setAutoCommit(true);
 		}catch(Exception E) {
 			System.out.println(E.getMessage());
 			E.getStackTrace();
@@ -416,35 +420,36 @@ public class ApiCallUtil {
 		return list;
 	}
 	
-	 boolean setSearchLogIns(double lat, double lnt){
+	 public boolean setSearchLogIns(double lat, double lnt){
 		DbHandler db = new DbHandler();
 		Connection conn = db.sqliteDbConn();
-		PreparedStatement ps = null;
 		
 		try {
 			String sql = "SELECT COUNT(1) + 1 FROM T_SEARCH_LOG";
 
 			ResultSet rs = db.dbGetSelect(conn, sql);
 			int log_id = rs.getInt(1);
-		    sql = "INSERT INTO T_SEARCH_LOG(LOG_ID, LAT, LNT, WORK_DT) VALUES(?, ?, ?, ?)";
-			ps = conn.prepareStatement(sql);
-			ps.setInt(0, log_id);
-			ps.setDouble(1, lat);
-			ps.setDouble(2, lnt);
-			ps.setString(3, getNowDateTime("YYYY-MM-dd HH:mm:ss"));
-			db.dbSetInsert(conn, ps);
+			if(rs!=null) {
+				rs.close();
+			}
+			System.out.println( " log_id  " + log_id);
+		    sql = " INSERT INTO T_SEARCH_LOG (LOG_ID, LAT, LNT, WORK_DT) VALUES (" + log_id +"," + lat + "," + lnt + ",\"" + getNowDateTime("YYYY-MM-dd HH:mm:ss") + "\");";
+		    
+			System.out.println(sql);
 			
+			PreparedStatement ps = conn.prepareStatement(sql);
+			System.out.println(ps.executeUpdate());
+			
+			System.out.println(3);
 			if(conn!=null) {
 				conn.close();
-			}
-			if(ps!=null) {
-				ps.close();
 			}
 			if(rs!=null) {
 				rs.close();
 			}
 		}catch(Exception E) {
 			System.out.println(E.getMessage());
+			E.printStackTrace();
 			return false;
 		}
 		return true;
@@ -459,9 +464,9 @@ public class ApiCallUtil {
 		return dbExeCnt;
 	}
 	
-	 ResultSet getSearchLogSel() {
+	 public ResultSet getSearchLogSel() {
 		ResultSet rs = null;
-		String sql = "SELECT LOG_ID, LAT, LNT, WORK_DT WHERE DEL_CHK IS NULL ORDER BY LOG_ID";
+		String sql = "SELECT LOG_ID, COUNT(1) CNT, LAT, LNT, WORK_DT WHERE DEL_CHK IS NULL ORDER BY WORK_DT";
 		DbHandler db = new DbHandler();
 		Connection conn = db.sqliteDbConn();
 		
@@ -483,7 +488,7 @@ public class ApiCallUtil {
 		return rs;
 	}
 	
-	 List getWifiInfoSel(double x, double y){
+	 public List getWifiInfoSel(double x, double y){
 		List<FreeWifiInfo> listAll = new ArrayList<>();
 		List<FreeWifiInfo> list = new ArrayList<>();
 		ResultSet rs = null;
@@ -496,11 +501,7 @@ public class ApiCallUtil {
 		
 		try {
 			conn = db.sqliteDbConn();
-			System.out.println("1");
 			rs = db.dbGetSelect(conn, sql);
-			System.out.println("2");
-			System.out.println(sql);
-			System.out.println("3");
 			while(rs.next()) {
 				FreeWifiInfo freeWifiInfo = new FreeWifiInfo();
 				freeWifiInfo.setMgr_no(rs.getString("RGM_NO"));
@@ -522,17 +523,13 @@ public class ApiCallUtil {
 				freeWifiInfo.setDistance(distance(x, y, freeWifiInfo.getLat(), freeWifiInfo.getLnt()));
 				listAll.add(freeWifiInfo);
 			}
-			System.out.println("4");
 			//거리순 정렬 후 20개만 리스트에 담아 리턴
 			Collections.sort(listAll, (a, b) -> Double.compare(a.getDistance(), b.getDistance()));
-			System.out.println("5");
 
-			System.out.println(listAll.size());
 			for(int i =0; i<20; i++) {
 				list.add(listAll.get(i));
 			}
 
-			System.out.println("6");
 			
 		}catch(Exception E) {
 			System.out.println(E.getMessage());

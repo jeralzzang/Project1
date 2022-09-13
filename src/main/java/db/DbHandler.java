@@ -20,8 +20,7 @@ public class DbHandler {
     public Connection sqliteDbConn() {
 		Connection conn = null;
 		String path = getCurrentDirectory();
-		System.out.println(path.concat(SQLITE_FILE_NAME));
-		String dbConnUrl = "jdbc:sqlite:".concat(path.concat(SQLITE_FILE_NAME));
+		String dbConnUrl = "jdbc:sqlite:".concat(path.concat(SQLITE_FILE_NAME)); //노트북용
 		
 		try {
 			Class.forName("org.sqlite.JDBC");
@@ -87,6 +86,7 @@ public class DbHandler {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.println(e.getMessage());
 			return -1;
 		}
 	}
