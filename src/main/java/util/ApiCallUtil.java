@@ -98,92 +98,6 @@ public class ApiCallUtil {
 		return req_id;
 	}
 	
-//	 public boolean setListDbInsert(List<FreeWifiInfo> list) {
-//		DbHandler db = new DbHandler();
-//		Connection conn = db.sqliteDbConn();
-//		try {
-//			//시작하기전 데이터 삭제
-//			String sql = "DELETE FROM T_WIFI_INFO";
-//			db.dbSetInsert(conn, sql);
-//
-////		    sql = " INSERT INTO T_WIFI_INFO(REQ_ID, RGM_NO, WRDOFC, MAIN_NM, ADRES1, ADRES2, "
-////					+ " INSTL_FLOOR, INSTL_TY, INSTL_MBY, SVC_SE, CMCWR, "
-////					+ " CNSTC_YEAR, INOUT_DOOR, REMARS3, "
-////					+ "	LAT, LNT, WORK_DTTM)"
-////					+ " VALUES(?, ?, ?, ?, ?, ?, "
-////				    + " ?, ?, ?, ?, ?, "
-////				    + " ?, ?, ?,  "
-////					+ " ?, ?, ?) ";
-//			String head_sql = " INSERT INTO T_WIFI_INFO(REQ_ID, RGM_NO, WRDOFC, MAIN_NM, ADRES1, ADRES2, INSTL_FLOOR,"
-//					+ " INSTL_TY, INSTL_MBY, SVC_SE, CMCWR,"
-//					+ " CNSTC_YEAR, INOUT_DOOR, REMARS3,"
-//					+ " LAT, LNT, WORK_DTTM)"
-//					+ " VALUES( "; 
-//		    
-//		    StringBuffer sbSql = new StringBuffer();
-//		    
-//			for(int i=0; i< list.size(); i++) {
-//				sbSql.append(head_sql);
-//				sbSql.append(list.get(i).getReq_id() + ", ");
-//				sbSql.append("'" + list.get(i).getMgr_no() + "', ");
-//				sbSql.append("'" + list.get(i).getWrdofc() + "', ");
-//				sbSql.append("'" + list.get(i).getMain_nm() + "', ");
-//				sbSql.append("'" + list.get(i).getAdres1() + "', ");
-//				sbSql.append("'" + list.get(i).getAdres2() + "', ");
-//				sbSql.append("'" + list.get(i).getInstl_floor() + "', ");
-//				sbSql.append("'" + list.get(i).getInstl_ty() + "', ");
-//				sbSql.append("'" + list.get(i).getInstl_mby() + "', ");
-//				sbSql.append("'" + list.get(i).getSvc_se() + "', ");
-//				sbSql.append("'" + list.get(i).getCmcwr() + "', ");
-//				sbSql.append("'" + list.get(i).getCnstc_year() + "', ");
-//				sbSql.append("'" + list.get(i).getInout_door() + "', ");
-//				sbSql.append("'" + list.get(i).getRemars3() + "', ");
-//				
-//				if(list.get(i).getMgr_no().equals("NW090011")) {
-//					sbSql.append(list.get(i).getLnt() + ", ");
-//					sbSql.append(list.get(i).getLat() + ", ");
-//				}else {
-//					sbSql.append(list.get(i).getLat() + ", ");
-//					sbSql.append(list.get(i).getLnt() + ", ");
-//				}
-//				sbSql.append("'" + list.get(i).getWork_dttm() + "'");
-//				sbSql.append("); ");
-//				if(i!=0 && (i%200==0 || i==list.size()-1)) {
-//					File file = new File("D:\\file\\text"+i+".txt");
-//					
-//					try {
-//						file.createNewFile();
-//						BufferedWriter wr = new BufferedWriter(new FileWriter(file, true));
-//						wr.write(sbSql.toString());
-//						wr.flush();
-//						wr.close();
-//					}catch(Exception E) {
-//						System.out.println(E.getMessage());
-//					}
-//					if(db.dbSetInsert(conn, sbSql.toString())<1) {
-//						throw new Exception();
-//					}
-//					sbSql = new StringBuffer();
-//				}
-//			}
-//		}catch(Exception E) {
-//			System.out.println(E.getMessage());
-//			E.getStackTrace();
-//			return false;
-//		}finally {
-//			try {
-//				if(conn!=null) {
-//					conn.close();
-//				}
-//				
-//			} catch (SQLException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-//		
-//		return true;
-//	}
 	
 	 public boolean setListDbInsert(List<FreeWifiInfo> list) {
 		DbHandler db = new DbHandler();
@@ -432,15 +346,12 @@ public class ApiCallUtil {
 			if(rs!=null) {
 				rs.close();
 			}
-			System.out.println( " log_id  " + log_id);
+			
 		    sql = " INSERT INTO T_SEARCH_LOG (LOG_ID, LAT, LNT, WORK_DT) VALUES (" + log_id +"," + lat + "," + lnt + ",\"" + getNowDateTime("YYYY-MM-dd HH:mm:ss") + "\");";
-		    
-			System.out.println(sql);
-			
+		    System.out.println(sql);
 			PreparedStatement ps = conn.prepareStatement(sql);
-			System.out.println(ps.executeUpdate());
+			ps.executeUpdate();
 			
-			System.out.println(3);
 			if(conn!=null) {
 				conn.close();
 			}
@@ -455,7 +366,7 @@ public class ApiCallUtil {
 		return true;
 	}
 	
-	 int setSearchLogDel(int logId) {
+	 public int setSearchLogDel(int logId) {
 		DbHandler db = new DbHandler();
 		
 		String sql = "UPDATE T_SEARCH_LOG SET DEL_CHK = " + "'" + "Y" + "'" + " WHERE LOG_ID = " + logId;
@@ -464,14 +375,25 @@ public class ApiCallUtil {
 		return dbExeCnt;
 	}
 	
-	 public ResultSet getSearchLogSel() {
+	 public List getSearchLogSel() {
 		ResultSet rs = null;
-		String sql = "SELECT LOG_ID, COUNT(1) CNT, LAT, LNT, WORK_DT WHERE DEL_CHK IS NULL ORDER BY WORK_DT";
+		String sql = "SELECT LOG_ID, LAT, LNT, WORK_DT FROM T_SEARCH_LOG WHERE DEL_CHK IS NULL ORDER BY WORK_DT DESC";
 		DbHandler db = new DbHandler();
 		Connection conn = db.sqliteDbConn();
+		List<List> list = new ArrayList<>();
 		
 		try {
 			rs = db.dbGetSelect(conn, sql);
+			
+			List list_detail = null;
+			while(rs.next()) {
+				list_detail = new ArrayList<>();
+				list_detail.add(rs.getString("LOG_ID"));
+				list_detail.add(rs.getString("LAT"));
+				list_detail.add(rs.getString("LNT"));
+				list_detail.add(rs.getString("WORK_DT"));
+				list.add(list_detail);
+			}
 			
 			if(conn!=null) {
 				conn.close();
@@ -485,7 +407,7 @@ public class ApiCallUtil {
 			System.out.println(E.getMessage());
 		}
 		
-		return rs;
+		return list;
 	}
 	
 	 public List getWifiInfoSel(double x, double y){

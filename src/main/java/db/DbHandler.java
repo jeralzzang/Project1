@@ -20,7 +20,9 @@ public class DbHandler {
     public Connection sqliteDbConn() {
 		Connection conn = null;
 		String path = getCurrentDirectory();
-		String dbConnUrl = "jdbc:sqlite:".concat(path.concat(SQLITE_FILE_NAME)); //노트북용
+		
+		String dbConnUrl = "jdbc:sqlite:".concat(path.concat(SQLITE_FILE_NAME));
+//		String dbConnUrl = "jdbc:sqlite:".concat("/Users/jisukang/eclipse-workspace/seoul-free-wifi/src/main/java/db/seoul-free-wifi.db");
 		
 		try {
 			Class.forName("org.sqlite.JDBC");

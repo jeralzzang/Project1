@@ -31,6 +31,13 @@
 	<a href="free-wifi-load.jsp">서울시 공공wifi가져오기</a>|
 	<a href="history.jsp">공공wifi조회이력</a>
 	<br>
+	<% 
+		ApiCallUtil ap = new ApiCallUtil();
+		String log_id = request.getParameter("log_id");
+		if(log_id!=null){
+			ap.setSearchLogDel(Integer.parseInt(log_id));
+		}
+	%>
 <table>
 		<thead>
 			<tr>
@@ -38,31 +45,30 @@
 				<th>X좌표</th>
 				<th>Y좌표</th>
 				<th>조회일자</th>
-				<th>도로명주소</th>
 				<th>비고</th>
 			</tr>
 		</thead>
+		<tbody>
 		<% 
-		ApiCallUtil ap = new ApiCallUtil();
-		ResultSet rs = ap.getSearchLogSel();
-		if(rs!=null){
-			rs.last();
-			while(rs.previous()){
-				out.write("<tr>");
-				out.write("<td>" + rs.getString("CNT")+"</td>");
-				out.write("<td>" + rs.getString("LNT")+"</td>");
-				out.write("<td>" + rs.getString("LAT")+"</td>");
-				out.write("<td>" + rs.getString("WORK_DT")+"</td>");
-				out.write("<td> <button type = \"button\" value = "+ rs.getString("LOG_ID") + " onclick = \"delLog(" + rs.getString("LOG_ID") +")\">삭제</td>");
-				out.write("</tr>");
-			}	
+		List<List> list = ap.getSearchLogSel();
+		
+		for(int i=0; i<list.size(); i++){
+			out.write("<tr>");
+			out.write("<td>" + (i+1) +"</td>");
+			out.write("<td>" + list.get(i).get(2) +"</td>");
+			out.write("<td>" + list.get(i).get(1) +"</td>");
+			out.write("<td>" + list.get(i).get(3) +"</td>");
+			out.write("<td> <button type = \"button\" onclick = \"delLog(" + list.get(i).get(0) +")\">삭제</td>");
+			out.write("</tr>");
 		}
+		
 		%>
+		</tbody>
 </table>
 </body>
 <script>
-	function delLog(log_id){
-		
-	}
+function delLog(log_id){
+		document.location.href="history.jsp?log_id="+log_id;
+}
 </script>
 </html>
